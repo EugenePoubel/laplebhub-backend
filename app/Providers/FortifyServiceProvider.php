@@ -13,6 +13,8 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Laravel\Fortify\Actions\RedirectIfTwoFactorAuthenticatable;
 use Laravel\Fortify\Fortify;
+use Laravel\Fortify\Contracts\RegisterResponse;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class FortifyServiceProvider extends ServiceProvider
 {
@@ -21,7 +23,16 @@ class FortifyServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->instance(abstract: RegisterResponse::class, instance: new class implements
+        RegisterResponse {
+            public function toResponse($request): JsonResponse
+            {
+                return response()->json(data: [
+                    'status' => 'success',
+                    'message' => "Votre compte a été créer avec succès",
+                ], status: 201);
+            }
+        });
     }
 
     /**
